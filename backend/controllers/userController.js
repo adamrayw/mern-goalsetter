@@ -11,7 +11,7 @@ const registerUser = async (req, res) => {
 
     if (!name || !email || !password) {
         res.status(400)
-        throw new Error('Please add all fields')
+        res.json({ message: 'Please add a all fields' })
     }
 
     // check if user exist
@@ -19,7 +19,7 @@ const registerUser = async (req, res) => {
 
     if (checkUser) {
         res.status(400)
-        throw new Error('User already exists')
+        res.json({ message: 'User already exist' })
     }
 
     // Hash Password
@@ -42,7 +42,7 @@ const registerUser = async (req, res) => {
         })
     } else {
         res.status(400)
-        throw new Error('Invalid user data')
+        res.json({ message: 'invalid user data' })
     }
 
 
@@ -67,7 +67,7 @@ const loginUser = async (req, res) => {
         })
     } else {
         res.status(400)
-        throw new Error('Invalid credentials')
+        res.json({ message: 'invalid credentials' })
     }
 }
 

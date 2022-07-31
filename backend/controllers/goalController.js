@@ -17,7 +17,7 @@ const getGoals = async (req, res) => {
 const postGoal = async (req, res) => {
     if (!req.body.text) {
         res.status(400)
-        throw new Error('Please add a text field')
+        res.json({ message: 'Please add a text field' })
     }
 
     const goal = await Goal.create({
@@ -37,7 +37,7 @@ const updateGoal = async (req, res) => {
 
     if (!goal) {
         res.status(400)
-        throw new Error('Goal not found')
+        res.json({ message: 'Goal not found' })
     }
 
     const user = await User.findById(req.user.id)
@@ -45,13 +45,13 @@ const updateGoal = async (req, res) => {
     // Check for user
     if (!user) {
         req.status(401)
-        throw new Error('User not found')
+        res.json({ message: 'User not found' })
     }
 
     // Make sure the logged in user matches the goals user
     if (goal.user.toString() !== user.id) {
         res.status(401)
-        throw new Error('User not authorized')
+        res.json({ message: 'User not authorized' })
     }
 
     const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, req.body, {
@@ -70,7 +70,7 @@ const deleteGoal = async (req, res) => {
 
     if (!goal) {
         res.status(400)
-        throw new Error('Goal not found')
+        res.json({ message: 'Goal not found' })
     }
 
     const user = await User.findById(req.user.id)
@@ -78,13 +78,13 @@ const deleteGoal = async (req, res) => {
     // Check for user
     if (!user) {
         req.status(401)
-        throw new Error('User not found')
+        res.json({ message: 'User not found' })
     }
 
     // Make sure the logged in user matches the goals user
     if (goal.user.toString() !== user.id) {
         res.status(401)
-        throw new Error('User not authorized')
+        res.json({ message: 'User not authorized' })
     }
 
     await goal.remove()
