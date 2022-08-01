@@ -40,16 +40,14 @@ const updateGoal = async (req, res) => {
         res.json({ message: 'Goal not found' })
     }
 
-    const user = await User.findById(req.user.id)
-
     // Check for user
-    if (!user) {
+    if (!req.user) {
         req.status(401)
         res.json({ message: 'User not found' })
     }
 
     // Make sure the logged in user matches the goals user
-    if (goal.user.toString() !== user.id) {
+    if (goal.user.toString() !== req.user.id) {
         res.status(401)
         res.json({ message: 'User not authorized' })
     }
@@ -73,16 +71,14 @@ const deleteGoal = async (req, res) => {
         res.json({ message: 'Goal not found' })
     }
 
-    const user = await User.findById(req.user.id)
-
     // Check for user
-    if (!user) {
+    if (!req.user) {
         req.status(401)
         res.json({ message: 'User not found' })
     }
 
     // Make sure the logged in user matches the goals user
-    if (goal.user.toString() !== user.id) {
+    if (goal.user.toString() !== req.user.id) {
         res.status(401)
         res.json({ message: 'User not authorized' })
     }
