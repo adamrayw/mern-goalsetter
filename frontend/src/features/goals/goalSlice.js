@@ -12,7 +12,8 @@ const initialState = {
 //  Get Goals
 export const getGoals = createAsyncThunk('goals/get', async (_, thunkAPI) => {
     try {
-        const token = thunkAPI.getState().auth.user.token
+        const token = thunkAPI.getState().auth.user ? thunkAPI.getState().auth.user.token : null
+
         return await goalService.getGoals(token)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
@@ -26,6 +27,18 @@ export const createGoal = createAsyncThunk('goals/create', async (goalData, thun
     try {
         const token = thunkAPI.getState().auth.user.token
         return await goalService.createGoal(goalData, token)
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// Delet goal
+export const deleteGoal = createAsyncThunk('goals/delete', async (id, thunkAPI) => {
+    try {
+        const token = thunkAPI.getState().auth.user ? thunkAPI.getState().auth.user.token : null
+        return await goalService.deleteGoal(id, token)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
 
@@ -63,6 +76,19 @@ export const goalSlice = createSlice({
                 state.goals = action.payload
             })
             .addCase(getGoals.rejected, (state, action) => {
+                state.isSuccess = false
+                state.isError = true
+                state.message = action.payload
+            })
+            .addCase(deleteGoal.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(deleteGoal.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.isSuccess = true
+                state.goals = state.goals.filter((goal) => goal._id !== action.payload.id)
+            })
+            .addCase(deleteGoal.rejected, (state, action) => {
                 state.isSuccess = false
                 state.isError = true
                 state.message = action.payload
